@@ -3,9 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.271
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarnAboutTODOs", "src\WarnAboutTODOs\WarnAboutTODOs.csproj", "{8FB642ED-A1C4-4B69-9EC0-2F87B342324A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WarnAboutTODOs", "src\WarnAboutTODOs\WarnAboutTODOs.csproj", "{8FB642ED-A1C4-4B69-9EC0-2F87B342324A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarnAboutTODOs.Vsix", "src\WarnAboutTODOs.Vsix\WarnAboutTODOs.Vsix.csproj", "{3CDDDCF3-7F02-416B-8C17-09679C4F75A4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C235BDFD-B678-4832-BE70-98304EF5584E}"
+	ProjectSection(SolutionItems) = preProject
+		CHANGELOG.md = CHANGELOG.md
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
