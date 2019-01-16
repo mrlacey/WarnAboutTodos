@@ -57,7 +57,7 @@ namespace WarnAboutTODOs
         {
             foreach (var term in terms)
             {
-                if (comment.StartsWith(term))
+                if (comment.ToLowerInvariant().StartsWith(term.ToLowerInvariant()))
                 {
                     var displayComment = comment.Substring(term.Length).TrimStart(' ', ':');
 
