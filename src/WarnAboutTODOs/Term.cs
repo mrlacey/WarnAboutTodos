@@ -8,19 +8,24 @@ namespace WarnAboutTODOs
         {
         }
 
-        public Term(string value)
+        public Term(string startsWith)
         {
-            this.Value = value;
+            this.StartsWith = startsWith;
             this.ReportLevel = ReportLevel.Warning;
         }
 
-        public Term(string value, ReportLevel reportLevel)
+        public Term(string startsWith, ReportLevel reportLevel)
         {
-            this.Value = value;
+            this.StartsWith = startsWith;
             this.ReportLevel = reportLevel;
         }
 
-        public string Value { get; set; }
         public ReportLevel ReportLevel { get; set; }
+
+        public string StartsWith { get; set; }
+
+        public string Contains { get; set; }
+
+        public string DoesNotContain { get; set; }
     }
 }

@@ -10,32 +10,38 @@ namespace WarnAboutTODOs
 {
     public abstract class WarnAboutTodosAnalyzer : DiagnosticAnalyzer
     {
+        private const string Id = "TODO";
+        private const string Title = "TODO";
+        private const string MessageFormat = "{0}";
+        private const string Category = "Task List";
+        private const string HelpLinkUri = "https://github.com/mrlacey/WarnAboutTodos";
+
         protected static DiagnosticDescriptor ErrorRule = new DiagnosticDescriptor(
-            "TODO",
-            "TODO",
-            "{0}",
-            "Task List",
+            Id,
+            Title,
+            MessageFormat,
+            Category,
             DiagnosticSeverity.Error,
             isEnabledByDefault: true,
-            helpLinkUri: "https://github.com/mrlacey/WarnAboutTodos");
+            helpLinkUri: HelpLinkUri);
 
         protected static DiagnosticDescriptor WarningRule = new DiagnosticDescriptor(
-            "TODO",
-            "TODO",
-            "{0}",
-            "Task List",
+            Id,
+            Title,
+            MessageFormat,
+            Category,
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            helpLinkUri: "https://github.com/mrlacey/WarnAboutTodos");
+            helpLinkUri: HelpLinkUri);
 
         protected static DiagnosticDescriptor InfoRule = new DiagnosticDescriptor(
-            "TODO",
-            "TODO",
-            "{0}",
-            "Task List",
+            Id,
+            Title,
+            MessageFormat,
+            Category,
             DiagnosticSeverity.Info,
             isEnabledByDefault: true,
-            helpLinkUri: "https://github.com/mrlacey/WarnAboutTodos");
+            helpLinkUri: HelpLinkUri);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(ErrorRule, WarningRule, InfoRule);
 
@@ -51,29 +57,92 @@ namespace WarnAboutTODOs
             var additionalFiles = context.Options.AdditionalFiles;
             var termsFile = additionalFiles.FirstOrDefault(file => Path.GetFileName(file.Path).ToLowerInvariant().Equals("todo-warn.config"));
 
+            Term CreateTerm(ReportLevel level, string line)
+            {
+                var result = new Term { ReportLevel = level };
+
+                const string startsGroup = "[STARTS(";
+                const string containsGroup = "[CONTAINS(";
+                const string notContainsGroup = "[DOESNOTCONTAIN(";
+                const string closeGroup = ")]";
+
+                if (line.StartsWith(startsGroup, StringComparison.OrdinalIgnoreCase))
+                {
+                    var closeIndex = line.IndexOf(closeGroup, StringComparison.Ordinal);
+
+                    if (closeIndex > 0)
+                    {
+                        var startsLen = startsGroup.Length;
+
+                        result.StartsWith = line.Substring(startsLen, closeIndex - startsLen);
+                        line = line.Substring(closeIndex + closeGroup.Length);
+                    }
+                }
+
+                if (line.StartsWith(containsGroup, StringComparison.OrdinalIgnoreCase))
+                {
+                    var closeIndex = line.IndexOf(closeGroup, StringComparison.Ordinal);
+
+                    if (closeIndex > 0)
+                    {
+                        var containsLen = containsGroup.Length;
+
+                        result.Contains = line.Substring(containsLen, closeIndex - containsLen);
+                        line = line.Substring(closeIndex + closeGroup.Length);
+                    }
+                }
+
+                if (line.StartsWith(notContainsGroup, StringComparison.OrdinalIgnoreCase))
+                {
+                    var closeIndex = line.IndexOf(closeGroup, StringComparison.Ordinal);
+
+                    if (closeIndex > 0)
+                    {
+                        var containsLen = notContainsGroup.Length;
+
+                        result.DoesNotContain = line.Substring(containsLen, closeIndex - containsLen);
+                        line = line.Substring(closeIndex + closeGroup.Length);
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(line) &&
+                    string.IsNullOrWhiteSpace(result.StartsWith) && 
+                    string.IsNullOrWhiteSpace(result.Contains) && 
+                    string.IsNullOrWhiteSpace(result.DoesNotContain))
+                {
+                    result.StartsWith = line;
+                }
+
+                return result;
+            }
+
             if (termsFile != null)
             {
                 var termsFileContents = termsFile.GetText(context.CancellationToken);
+
+                const string errorIndicator = "[ERROR]";
+                const string infoIndicator = "[INFO]";
+                const string warningIndicator = "[WARN]";
 
                 foreach (var line in termsFileContents.Lines)
                 {
                     var lineText = line.ToString();
 
-                    if (lineText.StartsWith("[ERROR]", StringComparison.OrdinalIgnoreCase))
+                    if (lineText.StartsWith(errorIndicator, StringComparison.OrdinalIgnoreCase))
                     {
-                        terms.Add(new Term { ReportLevel = ReportLevel.Error, Value = lineText.Substring("[ERROR]".Length) });
+                        terms.Add(CreateTerm(ReportLevel.Error, lineText.Substring(errorIndicator.Length)));
                     }
-                    else if (lineText.StartsWith("[INFO]", StringComparison.OrdinalIgnoreCase))
+                    else if (lineText.StartsWith(infoIndicator, StringComparison.OrdinalIgnoreCase))
                     {
-                        terms.Add(new Term { ReportLevel = ReportLevel.Info, Value = lineText.Substring("[INFO]".Length) });
+                        terms.Add(CreateTerm(ReportLevel.Info, lineText.Substring(infoIndicator.Length)));
                     }
-                    else if (lineText.StartsWith("[WARN]", StringComparison.OrdinalIgnoreCase))
+                    else if (lineText.StartsWith(warningIndicator, StringComparison.OrdinalIgnoreCase))
                     {
-                        terms.Add(new Term { ReportLevel = ReportLevel.Warning, Value = lineText.Substring("[WARN]".Length) });
+                        terms.Add(CreateTerm(ReportLevel.Warning, lineText.Substring(warningIndicator.Length)));
                     }
                     else if (!string.IsNullOrWhiteSpace(line.ToString()))
                     {
-                        terms.Add(new Term { ReportLevel = ReportLevel.Warning, Value = lineText });
+                        terms.Add(CreateTerm(ReportLevel.Warning, lineText));
                     }
                 }
             }
@@ -88,11 +157,57 @@ namespace WarnAboutTODOs
 
         protected void ReportIfUsesTerms(string comment, List<Term> terms, SyntaxTreeAnalysisContext context, Location location)
         {
+            bool report = false;
+            string displayComment = string.Empty;
+
             foreach (var term in terms)
             {
-                if (comment.ToLowerInvariant().StartsWith(term.Value.ToLowerInvariant()))
+                report = false;
+
+                if (!string.IsNullOrWhiteSpace(term.StartsWith))
                 {
-                    var displayComment = comment.Substring(term.Value.Length).TrimStart(' ', ':');
+                    if (comment.ToLowerInvariant().StartsWith(term.StartsWith.ToLowerInvariant()))
+                    {
+                        displayComment = comment.Substring(term.StartsWith.Length).TrimStart(' ', ':');
+                        report = true;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(term.Contains))
+                {
+                    if (comment.ToLowerInvariant().Contains(term.Contains.ToLowerInvariant()))
+                    {
+                        report = true;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(term.DoesNotContain))
+                {
+                    if (!comment.ToLowerInvariant().Contains(term.DoesNotContain.ToLowerInvariant()))
+                    {
+                        report = true;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+
+
+                if (report)
+                {
+                    if (string.IsNullOrWhiteSpace(displayComment))
+                    {
+                        displayComment = comment;
+                    }
 
                     switch (term.ReportLevel)
                     {
@@ -108,8 +223,6 @@ namespace WarnAboutTODOs
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
-
-                    break;
                 }
             }
         }
