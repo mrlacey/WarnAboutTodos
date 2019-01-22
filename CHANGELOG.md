@@ -7,6 +7,11 @@
 These are the changes to each version that has been released
 on the official Visual Studio extension gallery.
 
+## 1.2
+
+- [x] Allow controlling the outout type: Warning, Info, or Error
+- [x] Allow filtering based on lines that `Start`, `Contain`, or `DoesNotContain` specific text
+
 ## 1.1
 
 - [x] Removed unnecessary dependency that was preventing some installs
