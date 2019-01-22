@@ -33,8 +33,8 @@ It is possible to control the type of error that is reported and filter beyond j
 
 A line in the config file may, optionally, start with one of the following.
 
-`[INFO]` - which will cause any comment identified by the rest of the line to be reported as information/message.
-`[ERROR]` - which will cause any comment identified by the rest of the line to be reported as an error. Errors reported in this way will not cause a build to fail as they are separate from the build process.
+`[INFO]` - which will cause any comment identified by the rest of the line to be reported as information/message.  
+`[ERROR]` - which will cause any comment identified by the rest of the line to be reported as an error. Errors reported in this way will not cause a build to fail as they are separate from the build process.  
 `[WARN]` - which will cause any comment identified by the rest of the line to be reported as a warning. This is the same as not including any of these output indicators.
 
 #### Filtering output by line content
@@ -52,9 +52,11 @@ The following keywords are supported
 Each config block is optional but must be listed in the order shown above and can only be included once.
 
 This allows for the creation of rules such as "Show a message if a comment starting 'TODO' includes an issue number but isn't 'low-priority'."
-It would look like: `[INFO][STARTS(TODO)][CONTAINS(Issue#)][DOESNOTCONTAIN(low-priority)]`.
+It would look like:  
+`[INFO][STARTS(TODO)][CONTAINS(Issue#)][DOESNOTCONTAIN(low-priority)]`.
 
-Or you could have an error displayed if a comment line included, at any point, the text "before check-in" with the line `[ERROR][CONTAINS(before check-in)]`.
+Or you could have an error displayed if a comment line included, at any point, the text "before check-in" with the line  
+`[ERROR][CONTAINS(before check-in)]`.
 
 #### Example configuration
 
