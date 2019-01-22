@@ -15,9 +15,9 @@ namespace WarnAboutTODOs
         {
             try
             {
-                List<string> terms = null;
+                List<Term> terms = null;
 
-                List<string> CachedTerms(SyntaxTreeAnalysisContext cntxt)
+                List<Term> CachedTerms(SyntaxTreeAnalysisContext cntxt)
                 {
                     return terms ?? (terms = GetTerms(cntxt));
                 }

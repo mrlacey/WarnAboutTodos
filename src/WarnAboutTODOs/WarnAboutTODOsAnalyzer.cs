@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
@@ -9,7 +10,16 @@ namespace WarnAboutTODOs
 {
     public abstract class WarnAboutTodosAnalyzer : DiagnosticAnalyzer
     {
-        protected static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+        protected static DiagnosticDescriptor ErrorRule = new DiagnosticDescriptor(
+            "TODO",
+            "TODO",
+            "{0}",
+            "Task List",
+            DiagnosticSeverity.Error,
+            isEnabledByDefault: true,
+            helpLinkUri: "https://github.com/mrlacey/WarnAboutTodos");
+
+        protected static DiagnosticDescriptor WarningRule = new DiagnosticDescriptor(
             "TODO",
             "TODO",
             "{0}",
@@ -18,16 +28,25 @@ namespace WarnAboutTODOs
             isEnabledByDefault: true,
             helpLinkUri: "https://github.com/mrlacey/WarnAboutTodos");
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        protected static DiagnosticDescriptor InfoRule = new DiagnosticDescriptor(
+            "TODO",
+            "TODO",
+            "{0}",
+            "Task List",
+            DiagnosticSeverity.Info,
+            isEnabledByDefault: true,
+            helpLinkUri: "https://github.com/mrlacey/WarnAboutTodos");
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(ErrorRule, WarningRule, InfoRule);
 
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxTreeAction(HandleSyntaxTree);
         }
 
-        protected static List<string> GetTerms(SyntaxTreeAnalysisContext context)
+        protected static List<Term> GetTerms(SyntaxTreeAnalysisContext context)
         {
-            var terms = new List<string>();
+            var terms = new List<Term>();
 
             var additionalFiles = context.Options.AdditionalFiles;
             var termsFile = additionalFiles.FirstOrDefault(file => Path.GetFileName(file.Path).ToLowerInvariant().Equals("todo-warn.config"));
@@ -36,32 +55,60 @@ namespace WarnAboutTODOs
             {
                 var termsFileContents = termsFile.GetText(context.CancellationToken);
 
-                foreach (var term in termsFileContents.Lines)
+                foreach (var line in termsFileContents.Lines)
                 {
-                    if (!string.IsNullOrWhiteSpace(term.ToString()))
+                    var lineText = line.ToString();
+
+                    if (lineText.StartsWith("[ERROR]", StringComparison.OrdinalIgnoreCase))
                     {
-                        terms.Add(term.ToString());
+                        terms.Add(new Term { ReportLevel = ReportLevel.Error, Value = lineText.Substring("[ERROR]".Length) });
+                    }
+                    else if (lineText.StartsWith("[INFO]", StringComparison.OrdinalIgnoreCase))
+                    {
+                        terms.Add(new Term { ReportLevel = ReportLevel.Info, Value = lineText.Substring("[INFO]".Length) });
+                    }
+                    else if (lineText.StartsWith("[WARN]", StringComparison.OrdinalIgnoreCase))
+                    {
+                        terms.Add(new Term { ReportLevel = ReportLevel.Warning, Value = lineText.Substring("[WARN]".Length) });
+                    }
+                    else if (!string.IsNullOrWhiteSpace(line.ToString()))
+                    {
+                        terms.Add(new Term { ReportLevel = ReportLevel.Warning, Value = lineText });
                     }
                 }
             }
 
             if (!terms.Any())
             {
-                terms.Add("TODO");
+                terms.Add(Term.Default);
             }
 
             return terms;
         }
 
-        protected void ReportIfUsesTerms(string comment, List<string> terms, SyntaxTreeAnalysisContext context, Location location)
+        protected void ReportIfUsesTerms(string comment, List<Term> terms, SyntaxTreeAnalysisContext context, Location location)
         {
             foreach (var term in terms)
             {
-                if (comment.ToLowerInvariant().StartsWith(term.ToLowerInvariant()))
+                if (comment.ToLowerInvariant().StartsWith(term.Value.ToLowerInvariant()))
                 {
-                    var displayComment = comment.Substring(term.Length).TrimStart(' ', ':');
+                    var displayComment = comment.Substring(term.Value.Length).TrimStart(' ', ':');
 
-                    context.ReportDiagnostic(Diagnostic.Create(Rule, location, displayComment));
+                    switch (term.ReportLevel)
+                    {
+                        case ReportLevel.Warning:
+                            context.ReportDiagnostic(Diagnostic.Create(WarningRule, location, displayComment));
+                            break;
+                        case ReportLevel.Error:
+                            context.ReportDiagnostic(Diagnostic.Create(ErrorRule, location, displayComment));
+                            break;
+                        case ReportLevel.Info:
+                            context.ReportDiagnostic(Diagnostic.Create(InfoRule, location, displayComment));
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+
                     break;
                 }
             }
