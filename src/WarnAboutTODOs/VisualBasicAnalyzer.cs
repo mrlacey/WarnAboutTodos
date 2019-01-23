@@ -15,26 +15,28 @@ namespace WarnAboutTODOs
         {
             try
             {
-                List<Term> terms = null;
+                var config = GetConfig(context);
 
-                List<Term> CachedTerms(SyntaxTreeAnalysisContext cntxt)
+                if (config.ExcludesFile(context.Tree.FilePath))
                 {
-                    return terms ?? (terms = GetTerms(cntxt));
+                    return;
                 }
+
+                List<Term> terms = config.Terms;
 
                 SyntaxNode root = context.Tree.GetCompilationUnitRoot();
 
-                string comment;
-
                 foreach (var node in root.DescendantTrivia())
                 {
+                    string comment;
+
                     switch (node.Kind())
                     {
                         case SyntaxKind.CommentTrivia:
 
                             comment = node.ToString().TrimStart(vbTrimChars);
 
-                            ReportIfUsesTerms(comment, CachedTerms(context), context, node.GetLocation());
+                            ReportIfUsesTerms(comment, terms, context, node.GetLocation());
 
                             break;
 
@@ -44,7 +46,7 @@ namespace WarnAboutTODOs
 
                             foreach (var commentLine in comment.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
                             {
-                                ReportIfUsesTerms(commentLine.TrimStart(vbTrimChars), CachedTerms(context), context, node.GetLocation());
+                                ReportIfUsesTerms(commentLine.TrimStart(vbTrimChars), terms, context, node.GetLocation());
                             }
 
                             break;

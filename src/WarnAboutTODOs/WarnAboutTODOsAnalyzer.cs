@@ -50,9 +50,19 @@ namespace WarnAboutTODOs
             context.RegisterSyntaxTreeAction(HandleSyntaxTree);
         }
 
-        protected static List<Term> GetTerms(SyntaxTreeAnalysisContext context)
+        protected WatConfig GetConfig(SyntaxTreeAnalysisContext context)
+        {
+            var result = new WatConfig();
+
+            (result.Terms, result.Exclusions) = GetTermsAndExclusions(context);
+
+            return result;
+        }
+
+        protected static (List<Term>, List<string>) GetTermsAndExclusions(SyntaxTreeAnalysisContext context)
         {
             var terms = new List<Term>();
+            var exclusions = new List<string>();
 
             var additionalFiles = context.Options.AdditionalFiles;
             var termsFile = additionalFiles.FirstOrDefault(file => Path.GetFileName(file.Path).ToLowerInvariant().Equals("todo-warn.config"));
@@ -123,12 +133,17 @@ namespace WarnAboutTODOs
                 const string errorIndicator = "[ERROR]";
                 const string infoIndicator = "[INFO]";
                 const string warningIndicator = "[WARN]";
+                const string exclusionIndicator = "[EXCLUDE]";
 
                 foreach (var line in termsFileContents.Lines)
                 {
                     var lineText = line.ToString();
 
-                    if (lineText.StartsWith(errorIndicator, StringComparison.OrdinalIgnoreCase))
+                    if (lineText.StartsWith(exclusionIndicator, StringComparison.OrdinalIgnoreCase))
+                    {
+                        exclusions.Add(lineText.Substring(exclusionIndicator.Length).Trim());
+                    }
+                    else if (lineText.StartsWith(errorIndicator, StringComparison.OrdinalIgnoreCase))
                     {
                         terms.Add(CreateTerm(ReportLevel.Error, lineText.Substring(errorIndicator.Length)));
                     }
@@ -152,7 +167,7 @@ namespace WarnAboutTODOs
                 terms.Add(Term.Default);
             }
 
-            return terms;
+            return (terms, exclusions);
         }
 
         protected void ReportIfUsesTerms(string comment, List<Term> terms, SyntaxTreeAnalysisContext context, Location location)
