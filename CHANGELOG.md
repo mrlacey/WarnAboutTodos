@@ -1,6 +1,7 @@
 # Road map
 
--  Nothing else is currently planned. (Suggest something)[https://github.com/mrlacey/DemoSnippets/issues/new]
+- [ ] Allow the specifying of files to not report about
+- [ ] Nothing else is currently planned. (Suggest something)[https://github.com/mrlacey/DemoSnippets/issues/new]
 
 # Change log
 
