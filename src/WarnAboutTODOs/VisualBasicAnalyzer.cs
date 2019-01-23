@@ -1,8 +1,12 @@
+// <copyright file="VisualBasicAnalyzer.cs" company="Matt Lacey Ltd.">
+// Copyright (c) Matt Lacey Ltd. All rights reserved.
+// </copyright>
+
 using System;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.VisualBasic;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.VisualBasic;
 
 namespace WarnAboutTODOs
 {
@@ -15,7 +19,7 @@ namespace WarnAboutTODOs
         {
             try
             {
-                var config = GetConfig(context);
+                var config = this.GetConfig(context);
 
                 if (config.ExcludesFile(context.Tree.FilePath))
                 {
@@ -34,9 +38,9 @@ namespace WarnAboutTODOs
                     {
                         case SyntaxKind.CommentTrivia:
 
-                            comment = node.ToString().TrimStart(vbTrimChars);
+                            comment = node.ToString().TrimStart(this.vbTrimChars);
 
-                            ReportIfUsesTerms(comment, terms, context, node.GetLocation());
+                            this.ReportIfUsesTerms(comment, terms, context, node.GetLocation());
 
                             break;
 
@@ -46,7 +50,7 @@ namespace WarnAboutTODOs
 
                             foreach (var commentLine in comment.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
                             {
-                                ReportIfUsesTerms(commentLine.TrimStart(vbTrimChars), terms, context, node.GetLocation());
+                                this.ReportIfUsesTerms(commentLine.TrimStart(this.vbTrimChars), terms, context, node.GetLocation());
                             }
 
                             break;

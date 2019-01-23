@@ -1,3 +1,7 @@
+// <copyright file="WatConfig.cs" company="Matt Lacey Ltd.">
+// Copyright (c) Matt Lacey Ltd. All rights reserved.
+// </copyright>
+
 using System;
 using System.Collections.Generic;
 
@@ -11,7 +15,7 @@ namespace WarnAboutTODOs
 
         public bool ExcludesFile(string filePath)
         {
-            foreach (var exclusion in Exclusions)
+            foreach (var exclusion in this.Exclusions)
             {
                 if (filePath.EndsWith(exclusion, StringComparison.OrdinalIgnoreCase))
                 {

@@ -1,3 +1,7 @@
+// <copyright file="WarnAboutTODOsAnalyzer.cs" company="Matt Lacey Ltd.">
+// Copyright (c) Matt Lacey Ltd. All rights reserved.
+// </copyright>
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -16,7 +20,7 @@ namespace WarnAboutTODOs
         private const string Category = "Task List";
         private const string HelpLinkUri = "https://github.com/mrlacey/WarnAboutTodos";
 
-        protected static DiagnosticDescriptor ErrorRule = new DiagnosticDescriptor(
+        private static readonly DiagnosticDescriptor ErrorRule = new DiagnosticDescriptor(
             Id,
             Title,
             MessageFormat,
@@ -25,7 +29,7 @@ namespace WarnAboutTODOs
             isEnabledByDefault: true,
             helpLinkUri: HelpLinkUri);
 
-        protected static DiagnosticDescriptor WarningRule = new DiagnosticDescriptor(
+        private static readonly DiagnosticDescriptor WarningRule = new DiagnosticDescriptor(
             Id,
             Title,
             MessageFormat,
@@ -34,7 +38,7 @@ namespace WarnAboutTODOs
             isEnabledByDefault: true,
             helpLinkUri: HelpLinkUri);
 
-        protected static DiagnosticDescriptor InfoRule = new DiagnosticDescriptor(
+        private static readonly DiagnosticDescriptor InfoRule = new DiagnosticDescriptor(
             Id,
             Title,
             MessageFormat,
@@ -47,19 +51,23 @@ namespace WarnAboutTODOs
 
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(HandleSyntaxTree);
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
         }
+
+        internal abstract void HandleSyntaxTree(SyntaxTreeAnalysisContext obj);
 
         protected WatConfig GetConfig(SyntaxTreeAnalysisContext context)
         {
             var result = new WatConfig();
 
-            (result.Terms, result.Exclusions) = GetTermsAndExclusions(context);
+            (result.Terms, result.Exclusions) = this.GetTermsAndExclusions(context);
 
             return result;
         }
 
-        protected static (List<Term>, List<string>) GetTermsAndExclusions(SyntaxTreeAnalysisContext context)
+#pragma warning disable SA1008 // Opening parenthesis must not be preceded by a space
+        protected (List<Term>, List<string>) GetTermsAndExclusions(SyntaxTreeAnalysisContext context)
+#pragma warning restore SA1008 // Opening parenthesis must not be preceded by a space
         {
             var terms = new List<Term>();
             var exclusions = new List<string>();
@@ -116,8 +124,8 @@ namespace WarnAboutTODOs
                 }
 
                 if (!string.IsNullOrWhiteSpace(line) &&
-                    string.IsNullOrWhiteSpace(result.StartsWith) && 
-                    string.IsNullOrWhiteSpace(result.Contains) && 
+                    string.IsNullOrWhiteSpace(result.StartsWith) &&
+                    string.IsNullOrWhiteSpace(result.Contains) &&
                     string.IsNullOrWhiteSpace(result.DoesNotContain))
                 {
                     result.StartsWith = line;
@@ -216,7 +224,6 @@ namespace WarnAboutTODOs
                     }
                 }
 
-
                 if (report)
                 {
                     if (string.IsNullOrWhiteSpace(displayComment))
@@ -241,7 +248,5 @@ namespace WarnAboutTODOs
                 }
             }
         }
-
-        internal abstract void HandleSyntaxTree(SyntaxTreeAnalysisContext obj);
     }
 }

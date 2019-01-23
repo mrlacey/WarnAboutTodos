@@ -1,8 +1,14 @@
+// <copyright file="Term.cs" company="Matt Lacey Ltd.">
+// Copyright (c) Matt Lacey Ltd. All rights reserved.
+// </copyright>
+
 namespace WarnAboutTODOs
 {
     public class Term
     {
+#pragma warning disable SA1401 // Fields must be private
         public static Term Default = new Term("TODO");
+#pragma warning restore SA1401 // Fields must be private
 
         public Term()
         {

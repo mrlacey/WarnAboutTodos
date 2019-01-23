@@ -1,3 +1,7 @@
+// <copyright file="CsharpAnalyzer.cs" company="Matt Lacey Ltd.">
+// Copyright (c) Matt Lacey Ltd. All rights reserved.
+// </copyright>
+
 using System;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
@@ -15,7 +19,7 @@ namespace WarnAboutTODOs
         {
             try
             {
-                var config = GetConfig(context);
+                var config = this.GetConfig(context);
 
                 if (config.ExcludesFile(context.Tree.FilePath))
                 {
@@ -34,9 +38,9 @@ namespace WarnAboutTODOs
                     {
                         case SyntaxKind.SingleLineCommentTrivia:
 
-                            comment = node.ToString().TrimStart(csTrimChars);
+                            comment = node.ToString().TrimStart(this.csTrimChars);
 
-                            ReportIfUsesTerms(comment, terms, context, node.GetLocation());
+                            this.ReportIfUsesTerms(comment, terms, context, node.GetLocation());
 
                             break;
 
@@ -47,7 +51,7 @@ namespace WarnAboutTODOs
 
                             foreach (var commentLine in comment.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
                             {
-                                ReportIfUsesTerms(commentLine.TrimStart(csTrimChars), terms, context, node.GetLocation());
+                                this.ReportIfUsesTerms(commentLine.TrimStart(this.csTrimChars), terms, context, node.GetLocation());
                             }
 
                             break;
