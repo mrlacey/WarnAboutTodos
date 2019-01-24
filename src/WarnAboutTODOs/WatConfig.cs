@@ -17,9 +17,60 @@ namespace WarnAboutTODOs
         {
             foreach (var exclusion in this.Exclusions)
             {
-                if (filePath.EndsWith(exclusion, StringComparison.OrdinalIgnoreCase))
+                var wcIndex = exclusion.IndexOf('*');
+
+                if (wcIndex > -1)
                 {
-                    return true;
+                    // Simple single, wildcard match
+                    var beforeWildCard = exclusion.Substring(0, wcIndex);
+                    var afterWildCard = exclusion.Substring(wcIndex + 1);
+
+                    var beforeMatch = false;
+                    var afterMatch = false;
+
+                    if (!string.IsNullOrWhiteSpace(beforeWildCard))
+                    {
+                        if (filePath.ToLowerInvariant().Contains(beforeWildCard.ToLowerInvariant()))
+                        {
+                            beforeMatch = true;
+                        }
+                    }
+                    else
+                    {
+                        if (wcIndex == 0)
+                        {
+                            // If wildcard was first char then match everything
+                            beforeMatch = true;
+                        }
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(afterWildCard))
+                    {
+                        if (filePath.EndsWith(afterWildCard, StringComparison.OrdinalIgnoreCase))
+                        {
+                            afterMatch = true;
+                        }
+                    }
+                    else
+                    {
+                        if (wcIndex == exclusion.Length - 1)
+                        {
+                            // If wildcard was last char then match everything
+                            afterMatch = true;
+                        }
+                    }
+
+                    if (beforeMatch && afterMatch)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    if (filePath.EndsWith(exclusion, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
                 }
             }
 
