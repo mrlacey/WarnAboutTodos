@@ -28,6 +28,11 @@
     <DocumentationFile>C:\Users\matt\Documents\GitHub\WarnAboutTodos\src\WarnAboutTODOs\WarnAboutTODOs.xml</DocumentationFile>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile></DocumentationFile>
+    <NoWarn>1701;1702;SA1652</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="StyleCop.json" />
   </ItemGroup>

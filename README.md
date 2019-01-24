@@ -58,6 +58,38 @@ It would look like:
 Or you could have an error displayed if a comment line included, at any point, the text "before check-in" with the line  
 `[ERROR][CONTAINS(before check-in)]`.
 
+#### Excluding files from output
+
+If you do not wish a warning to be raised in a specific file (or files) this can be achieved with the `[EXCLUDE]` instruction.
+
+Specify a line in the config that starts with `[EXCLUDE]` followed by the name of the file to exclude.
+e.g.
+```
+[EXCLUDE]Program.cs
+```
+
+This will prevent the reporting of any file named "Program.cs" or has a name that ends this way and so will, for example, also matches "MyProgram.cs".
+To match the filename exactly, include the path separator, like so `[EXCLUDE]\Program.cs`
+
+A single wild card (*) can be included in the path and one is assumed at the start.
+The following lines are treated as identical.
+```
+[EXCLUDE]\Program.cs
+[EXCLUDE]*\Program.cs
+```
+
+Adding a wildcard at the end of the instruction can be useful to exclude all files in a directory. The following would prevent the reporting of warnings about any files in the "Controllers" directory, including in any sub-directory.
+```
+[EXCLUDE]\Controllers\*
+```
+
+A wildcard can also be included in the middle of the text. The following prevents reporting of warnings about any file in the "Views" directory that ends with "Page" and has the ".cs" extension.
+```
+[EXCLUDE]\Views\*Page.cs
+```
+
+Multiple exclusion instructions can be specified in the config file and if any match the full path of a file being analyzed it will prevent any warnings for that file being reported.
+
 #### Example configuration
 
 The following are all examples of valid lines in a config file.
@@ -70,4 +102,5 @@ TO DO
 [ERROR][CONTAINS(before check-in)]
 [WARN][STARTS(TODO)][DOESNOTCONTAIN(Issue#)]
 [INFO][STARTS(TODO)][CONTAINS(Issue#)][DOESNOTCONTAIN(low-priority)]
+[EXCLUDE]Config\*.cs
 ```
