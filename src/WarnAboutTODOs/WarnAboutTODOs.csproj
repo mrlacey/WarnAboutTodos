@@ -15,13 +15,13 @@
     <PackageIconUrl></PackageIconUrl>
     <RepositoryUrl>https://github.com/mrlacey/WarnAboutTodos</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Description>WarnAboutTODOs</Description>
-    <PackageReleaseNotes>Initial Release.</PackageReleaseNotes>
+    <Description>Create warnings about TODO comments</Description>
+    <PackageReleaseNotes></PackageReleaseNotes>
     <Copyright>Copyright 2019 Matt Lacey</Copyright>
     <PackageTags>WarnAboutTODOs, analyzers</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <Company>Matt Lacey Ltd.</Company>
-    <Version>1.3.0</Version>
+    <Version>1.4.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

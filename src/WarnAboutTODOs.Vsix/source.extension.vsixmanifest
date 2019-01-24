@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="WarnAboutTODOs.c50458a5-b99a-484f-be10-f1a8714c1453" Version="1.3" Language="en-US" Publisher="Matt Lacey"/>
+        <Identity Id="WarnAboutTODOs.c50458a5-b99a-484f-be10-f1a8714c1453" Version="1.4" Language="en-US" Publisher="Matt Lacey"/>
         <DisplayName>Warn About TODOs</DisplayName>
         <Description xml:space="preserve">Displays warnings for TODO notes in comments</Description>
+        <MoreInfo>https://github.com/mrlacey/WarnAboutTodos</MoreInfo>
+        <License>Resources\LICENSE</License>
+        <GettingStartedGuide>https://github.com/mrlacey/WarnAboutTodos/blob/master/README.md</GettingStartedGuide>
+        <ReleaseNotes>https://github.com/mrlacey/WarnAboutTodos/blob/master/CHANGELOG.md</ReleaseNotes>
+        <Icon>Resources\Icon.png</Icon>
+        <PreviewImage>Resources\Icon.png</PreviewImage>
     </Metadata>
     <Installation>
         <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[15.0, 17.0)" />
