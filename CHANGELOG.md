@@ -7,6 +7,11 @@
 These are the changes to each version that has been released
 on the official Visual Studio extension gallery.
 
+## 1.4
+
+- [x] Better handling of TODOs in multi-line comments
+- [x] Icon
+
 ## 1.3
 
 - [x] Allow the specifying of files to not report about
