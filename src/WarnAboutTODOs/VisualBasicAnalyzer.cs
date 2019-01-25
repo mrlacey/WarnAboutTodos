@@ -48,9 +48,19 @@ namespace WarnAboutTODOs
 
                             comment = node.ToString();
 
+                            var baseLocation = node.GetLocation();
+
+                            var offset = node.SpanStart;
+
                             foreach (var commentLine in comment.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
                             {
-                                this.ReportIfUsesTerms(commentLine.TrimStart(this.vbTrimChars), terms, context, node.GetLocation());
+                                var trimmedLine = commentLine.TrimStart(this.vbTrimChars);
+
+                                var trimLength = commentLine.Length - trimmedLine.Length;
+
+                                this.ReportIfUsesTerms(trimmedLine, terms, context, baseLocation, offset + trimLength);
+
+                                offset = offset + commentLine.Length + Environment.NewLine.Length;
                             }
 
                             break;
