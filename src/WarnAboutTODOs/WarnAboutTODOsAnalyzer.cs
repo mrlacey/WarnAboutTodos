@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
 
 namespace WarnAboutTODOs
 {
@@ -178,20 +179,21 @@ namespace WarnAboutTODOs
             return (terms, exclusions);
         }
 
-        protected void ReportIfUsesTerms(string comment, List<Term> terms, SyntaxTreeAnalysisContext context, Location location)
+        protected void ReportIfUsesTerms(string comment, List<Term> terms, SyntaxTreeAnalysisContext context, Location location, int startOffset = -1)
         {
-            bool report = false;
-            string displayComment = string.Empty;
+            var displayComment = string.Empty;
+            var displayOffset = 0;
 
             foreach (var term in terms)
             {
-                report = false;
+                var report = false;
 
                 if (!string.IsNullOrWhiteSpace(term.StartsWith))
                 {
                     if (comment.ToLowerInvariant().StartsWith(term.StartsWith.ToLowerInvariant()))
                     {
                         displayComment = comment.Substring(term.StartsWith.Length).TrimStart(' ', ':');
+                        displayOffset = comment.IndexOf(term.StartsWith, StringComparison.OrdinalIgnoreCase);
                         report = true;
                     }
                     else
@@ -231,16 +233,25 @@ namespace WarnAboutTODOs
                         displayComment = comment;
                     }
 
+                    var locationToUse = location;
+
+                    if (startOffset >= 0)
+                    {
+                        locationToUse = Location.Create(
+                            location.SourceTree,
+                            new TextSpan(startOffset + displayOffset, comment.Length - displayOffset));
+                    }
+
                     switch (term.ReportLevel)
                     {
                         case ReportLevel.Warning:
-                            context.ReportDiagnostic(Diagnostic.Create(WarningRule, location, displayComment));
+                            context.ReportDiagnostic(Diagnostic.Create(WarningRule, locationToUse, displayComment));
                             break;
                         case ReportLevel.Error:
-                            context.ReportDiagnostic(Diagnostic.Create(ErrorRule, location, displayComment));
+                            context.ReportDiagnostic(Diagnostic.Create(ErrorRule, locationToUse, displayComment));
                             break;
                         case ReportLevel.Info:
-                            context.ReportDiagnostic(Diagnostic.Create(InfoRule, location, displayComment));
+                            context.ReportDiagnostic(Diagnostic.Create(InfoRule, locationToUse, displayComment));
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
