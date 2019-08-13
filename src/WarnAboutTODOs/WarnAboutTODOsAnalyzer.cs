@@ -73,8 +73,10 @@ namespace WarnAboutTODOs
             var terms = new List<Term>();
             var exclusions = new List<string>();
 
+            const string configFileName = "todo-warn.config";
             var additionalFiles = context.Options.AdditionalFiles;
-            var termsFile = additionalFiles.FirstOrDefault(file => Path.GetFileName(file.Path).ToLowerInvariant().Equals("todo-warn.config"));
+            var termsFile = additionalFiles.FirstOrDefault(file => Path.GetFileName(file.Path).ToLowerInvariant().Equals(configFileName))
+                            ?? UserConfigFile.FromApplicationData(configFileName);
 
             Term CreateTerm(ReportLevel level, string line)
             {
