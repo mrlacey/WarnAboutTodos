@@ -22,7 +22,7 @@ This can be overridden by including an `AdditionalFile` in the project called **
 If this file exists, warnings will only be reported for comments that start with any of the non-blank lines in that file.  
 
 A **todo-warn.config** file can also be specified in your user's
-[ApplicationData](https://docs.microsoft.com/en-us/dotnet/api/system.environment.specialfolder?view=netframework-4.8&viewFallbackFrom=netstandard-1.3) directory.
+[ApplicationData](https://docs.microsoft.com/en-us/dotnet/api/system.environment.specialfolder?view=netstandard-2.0) directory. (You can get to this by entering `%appdata%` in the File Explorer address bar.)
 Project-level configurations will override the user level configuration if they exist.
 
 For example, if the config file contained the line `TODO BEFORE CHECK-IN`, only comments that start that way are reported.
