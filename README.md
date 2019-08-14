@@ -6,7 +6,7 @@ Download this extension from the [VS Gallery](https://marketplace.visualstudio.c
 
 ---------------------------------------
 
-Visual Studio automatically takes code comments that include `TODO` and turns them into User Tasks that are displayed on the Task List.  
+Visual Studio automatically takes code comments that include `TODO` and turns them into User Tasks that are displayed on the Task List.
 This extension takes those same tasks and also creates warnings for them.  
 This can be useful if you don't look at the Task List or want an extra reminder to do something before committing a change.
 
@@ -19,10 +19,9 @@ The default behavior is to create a warning about any comment line that starts w
 ### Simple configuration
 
 This can be overridden by including an `AdditionalFile` in the project called **todo-warn.config**.
-If this file exists, warnings will only be reported for comments that start with any of the non-blank lines in that file.  
+If this file exists, warnings will only be reported for comments that start with any of the non-blank lines in that file.
 
-A **todo-warn.config** file can also be specified in your user's
-[ApplicationData](https://docs.microsoft.com/en-us/dotnet/api/system.environment.specialfolder?view=netstandard-2.0) directory. (You can get to this by entering `%appdata%` in the File Explorer address bar.)
+A **todo-warn.config** file can also be specified in your user's [ApplicationData](https://docs.microsoft.com/en-us/dotnet/api/system.environment.specialfolder?view=netstandard-2.0) directory. (You can get to this by entering `%appdata%` in the File Explorer address bar.)
 Project-level configurations will override the user level configuration if they exist.
 
 For example, if the config file contained the line `TODO BEFORE CHECK-IN`, only comments that start that way are reported.
@@ -37,8 +36,8 @@ It is possible to control the type of error that is reported and filter beyond j
 
 A line in the config file may, optionally, start with one of the following.
 
-`[INFO]` - which will cause any comment identified by the rest of the line to be reported as information/message.  
-`[ERROR]` - which will cause any comment identified by the rest of the line to be reported as an error. Errors reported in this way will not cause a build to fail as they are separate from the build process.  
+`[INFO]` - which will cause any comment identified by the rest of the line to be reported as information/message.
+`[ERROR]` - which will cause any comment identified by the rest of the line to be reported as an error. Errors reported in this way will not cause a build to fail as they are separate from the build process.
 `[WARN]` - which will cause any comment identified by the rest of the line to be reported as a warning. This is the same as not including any of these output indicators.
 
 #### Filtering output by line content
@@ -59,8 +58,7 @@ This allows for the creation of rules such as "Show a message if a comment start
 It would look like:  
 `[INFO][STARTS(TODO)][CONTAINS(Issue#)][DOESNOTCONTAIN(low-priority)]`.
 
-Or you could have an error displayed if a comment line included, at any point, the text "before check-in" with the line  
-`[ERROR][CONTAINS(before check-in)]`.
+Or you could have an error displayed if a comment line included, at any point, the text "before check-in" with the line `[ERROR][CONTAINS(before check-in)]`.
 
 #### Excluding files from output
 
