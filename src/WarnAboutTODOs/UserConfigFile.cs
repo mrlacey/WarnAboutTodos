@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="UserConfigFile.cs" company="Matt Lacey Ltd.">
+// Copyright (c) Matt Lacey Ltd. All rights reserved.
+// </copyright>
+
+using System;
 using System.IO;
 using System.Threading;
 using Microsoft.CodeAnalysis;
@@ -25,6 +29,5 @@ namespace WarnAboutTODOs
         {
             return SourceText.From(File.ReadAllText(this.Path));
         }
-
     }
 }
