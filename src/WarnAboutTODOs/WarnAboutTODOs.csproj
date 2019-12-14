@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -8,12 +8,13 @@
 
   <PropertyGroup>
     <PackageId>WarnAboutTODOs</PackageId>
-    <PackageVersion>1.0.0.0</PackageVersion>
+    <PackageVersion>1.5.0.0</PackageVersion>
     <Authors>Matt Lacey</Authors>
-    <PackageLicenseUrl>https://github.com/mrlacey/WarnAboutTodos/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseUrl></PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/mrlacey/WarnAboutTodos</PackageProjectUrl>
     <PackageIconUrl></PackageIconUrl>
     <RepositoryUrl>https://github.com/mrlacey/WarnAboutTodos</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Description>Create warnings about TODO comments</Description>
     <PackageReleaseNotes></PackageReleaseNotes>
@@ -21,11 +22,13 @@
     <PackageTags>WarnAboutTODOs, analyzers</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <Company>Matt Lacey Ltd.</Company>
-    <Version>1.4.0</Version>
+    <Version>1.5.0</Version>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>Icon.png</PackageIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>C:\Users\matt\Documents\GitHub\WarnAboutTodos\src\WarnAboutTODOs\WarnAboutTODOs.xml</DocumentationFile>
+    <DocumentationFile></DocumentationFile>
     <NoWarn>1701;1702;CS1591</NoWarn>
   </PropertyGroup>
 
@@ -36,6 +39,10 @@
 
   <ItemGroup>
     <None Remove="StyleCop.json" />
+    <None Include="..\..\art\Icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -45,7 +52,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.6.3" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.10.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="2.10.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="2.10.0" PrivateAssets="all" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
