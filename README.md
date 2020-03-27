@@ -36,8 +36,8 @@ It is possible to control the type of error that is reported and filter beyond j
 
 A line in the config file may, optionally, start with one of the following.
 
-`[INFO]` - which will cause any comment identified by the rest of the line to be reported as information/message.
-`[ERROR]` - which will cause any comment identified by the rest of the line to be reported as an error. Errors reported in this way will not cause a build to fail as they are separate from the build process.
+`[INFO]` - which will cause any comment identified by the rest of the line to be reported as information/message.  
+`[ERROR]` - which will cause any comment identified by the rest of the line to be reported as an error. Errors reported in this way will not cause a build to fail as they are separate from the build process.  
 `[WARN]` - which will cause any comment identified by the rest of the line to be reported as a warning. This is the same as not including any of these output indicators.
 
 #### Filtering output by line content
