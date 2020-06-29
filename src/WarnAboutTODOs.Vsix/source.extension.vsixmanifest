@@ -6,8 +6,8 @@
         <Description xml:space="preserve">Displays warnings for TODO notes in comments</Description>
         <MoreInfo>https://github.com/mrlacey/WarnAboutTodos</MoreInfo>
         <License>Resources\LICENSE</License>
-        <GettingStartedGuide>https://github.com/mrlacey/WarnAboutTodos/blob/master/README.md</GettingStartedGuide>
-        <ReleaseNotes>https://github.com/mrlacey/WarnAboutTodos/blob/master/CHANGELOG.md</ReleaseNotes>
+        <GettingStartedGuide>https://github.com/mrlacey/WarnAboutTodos/blob/main/README.md</GettingStartedGuide>
+        <ReleaseNotes>https://github.com/mrlacey/WarnAboutTodos/blob/main/CHANGELOG.md</ReleaseNotes>
         <Icon>Resources\Icon.png</Icon>
         <PreviewImage>Resources\Icon.png</PreviewImage>
     </Metadata>
