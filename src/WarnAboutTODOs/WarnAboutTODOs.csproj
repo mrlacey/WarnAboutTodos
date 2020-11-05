@@ -8,7 +8,7 @@
 
   <PropertyGroup>
     <PackageId>WarnAboutTODOs</PackageId>
-    <PackageVersion>1.5.0.0</PackageVersion>
+    <PackageVersion>1.6.0.0</PackageVersion>
     <Authors>Matt Lacey</Authors>
     <PackageLicenseUrl></PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/mrlacey/WarnAboutTodos</PackageProjectUrl>
@@ -18,11 +18,11 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Description>Create warnings about TODO comments</Description>
     <PackageReleaseNotes></PackageReleaseNotes>
-    <Copyright>Copyright 2019 Matt Lacey</Copyright>
+    <Copyright>Copyright 2020 Matt Lacey</Copyright>
     <PackageTags>WarnAboutTODOs, analyzers</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <Company>Matt Lacey Ltd.</Company>
-    <Version>1.5.0</Version>
+    <Version>1.6.0</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>Icon.png</PackageIcon>
   </PropertyGroup>

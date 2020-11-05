@@ -7,6 +7,10 @@
 These are the changes to each version that has been released
 on the official Visual Studio extension gallery.
 
+## 1.6
+
+- [x] Enable configuration keyword `MATCHESREGEX`
+
 ## 1.5
 
 - [x] Enable user level config files

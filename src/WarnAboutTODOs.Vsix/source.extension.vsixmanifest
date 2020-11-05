@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="WarnAboutTODOs.c50458a5-b99a-484f-be10-f1a8714c1453" Version="1.5" Language="en-US" Publisher="Matt Lacey"/>
+        <Identity Id="WarnAboutTODOs.c50458a5-b99a-484f-be10-f1a8714c1453" Version="1.6" Language="en-US" Publisher="Matt Lacey"/>
         <DisplayName>Warn About TODOs</DisplayName>
         <Description xml:space="preserve">Displays warnings for TODO notes in comments</Description>
         <MoreInfo>https://github.com/mrlacey/WarnAboutTodos</MoreInfo>
