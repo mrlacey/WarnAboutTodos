@@ -57,6 +57,7 @@ The following keywords are supported
 - STARTS
 - CONTAINS
 - DOESNOTCONTAIN
+- MATCHESREGEX
 
 Each config block is optional but must be listed in the order shown above and can only be included once.
 
@@ -102,7 +103,7 @@ Multiple exclusion instructions can be specified in the config file and if any m
 
 The following are all examples of valid lines in a config file.
 
-```
+```ascii
 TO DO
 [WARN]temp
 [WARN]for-review
@@ -111,4 +112,5 @@ TO DO
 [WARN][STARTS(TODO)][DOESNOTCONTAIN(Issue#)]
 [INFO][STARTS(TODO)][CONTAINS(Issue#)][DOESNOTCONTAIN(low-priority)]
 [EXCLUDE]Config\*.cs
+[MATCHESREGEX(Issue #[\d]+)]
 ```

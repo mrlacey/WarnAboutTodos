@@ -33,5 +33,7 @@ namespace WarnAboutTODOs
         public string Contains { get; set; }
 
         public string DoesNotContain { get; set; }
+
+        public string MatchesRegex { get; set; }
     }
 }

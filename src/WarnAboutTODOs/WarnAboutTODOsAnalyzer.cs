@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
@@ -85,6 +86,7 @@ namespace WarnAboutTODOs
                 const string startsGroup = "[STARTS(";
                 const string containsGroup = "[CONTAINS(";
                 const string notContainsGroup = "[DOESNOTCONTAIN(";
+                const string matchesRegexGroup = "[MATCHESREGEX(";
                 const string closeGroup = ")]";
 
                 if (line.StartsWith(startsGroup, StringComparison.OrdinalIgnoreCase))
@@ -126,10 +128,24 @@ namespace WarnAboutTODOs
                     }
                 }
 
+                if (line.StartsWith(matchesRegexGroup, StringComparison.OrdinalIgnoreCase))
+                {
+                    var closeIndex = line.IndexOf(closeGroup, StringComparison.Ordinal);
+
+                    if (closeIndex > 0)
+                    {
+                        var containsLen = matchesRegexGroup.Length;
+
+                        result.MatchesRegex = line.Substring(containsLen, closeIndex - containsLen);
+                        line = line.Substring(closeIndex + closeGroup.Length);
+                    }
+                }
+
                 if (!string.IsNullOrWhiteSpace(line) &&
                     string.IsNullOrWhiteSpace(result.StartsWith) &&
                     string.IsNullOrWhiteSpace(result.Contains) &&
-                    string.IsNullOrWhiteSpace(result.DoesNotContain))
+                    string.IsNullOrWhiteSpace(result.DoesNotContain) &&
+                    string.IsNullOrWhiteSpace(result.MatchesRegex))
                 {
                     result.StartsWith = line;
                 }
@@ -219,6 +235,18 @@ namespace WarnAboutTODOs
                 if (!string.IsNullOrWhiteSpace(term.DoesNotContain))
                 {
                     if (!comment.ToLowerInvariant().Contains(term.DoesNotContain.ToLowerInvariant()))
+                    {
+                        report = true;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(term.MatchesRegex))
+                {
+                    if (new Regex(term.MatchesRegex).IsMatch(comment))
                     {
                         report = true;
                     }
