@@ -18,11 +18,11 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Description>Create warnings about TODO comments</Description>
     <PackageReleaseNotes></PackageReleaseNotes>
-    <Copyright>Copyright 2020 Matt Lacey</Copyright>
-    <PackageTags>WarnAboutTODOs, analyzers</PackageTags>
+    <Copyright>Copyright 2021 Matt Lacey</Copyright>
+    <PackageTags>WarnAboutTODOs;analyzers</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <Company>Matt Lacey Ltd.</Company>
-    <Version>1.6.0</Version>
+    <Version>1.7.0</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>Icon.png</PackageIcon>
   </PropertyGroup>
