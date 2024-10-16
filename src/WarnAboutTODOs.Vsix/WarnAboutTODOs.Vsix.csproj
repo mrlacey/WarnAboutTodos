@@ -73,9 +73,6 @@
     <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers">
       <Version>15.8.209</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.VSSDK.Vsixsigntool">
-      <Version>16.2.29116.78</Version>
-    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Icon.png">
