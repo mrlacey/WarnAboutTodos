@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: "Build"
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '*.md'
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - '*.md'
+      
+jobs:
+  build:
+    name: Build 
+    runs-on: windows-2022
+    
+    permissions:
+      checks: write
+
+      # needed unless run with comment_mode: off
+      pull-requests: write
+
+    env:
+      Configuration: Debug
+      
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET build dependencies
+      uses: timheuer/bootstrap-dotnet@v2
+      with:
+        nuget: 'false'
+        sdk: 'false'
+        msbuild: 'true'
+
+    - name: Build
+      run: msbuild /v:m -restore /p:OutDir=\_built ./WarnAboutTodos.sln
