@@ -37,15 +37,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="StyleCop.json" />
     <None Include="..\..\art\Icon.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <AdditionalFiles Include="StyleCop.json" />
   </ItemGroup>
 
   <ItemGroup>
