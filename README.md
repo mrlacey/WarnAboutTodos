@@ -7,6 +7,8 @@
 ![Visual Studio Marketplace 5 Stars](https://img.shields.io/badge/VS%20Marketplace-★★★★★-green)
 ![Install from NuGet](https://img.shields.io/nuget/v/WarnAboutTODOs)
 
+[![Build](https://github.com/mrlacey/WarnAboutTodos/actions/workflows/build.yaml/badge.svg)](https://github.com/mrlacey/WarnAboutTodos/actions/workflows/build.yaml)
+
 Download this extension from the [VS Marketplace](https://marketplace.visualstudio.com/items?itemName=MattLaceyLtd.WarnAboutTODOs) or install as an analyzer from [NuGet](https://www.nuget.org/packages/WarnAboutTODOs/).
 
 ---------------------------------------
