@@ -36,4 +36,4 @@ jobs:
         msbuild: 'true'
 
     - name: Build
-      run: msbuild /v:m -restore /p:OutDir=\_built ./WarnAboutTodos.sln
+      run: msbuild /v:m -restore ./WarnAboutTodos.sln
