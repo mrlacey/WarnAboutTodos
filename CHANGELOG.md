@@ -7,7 +7,12 @@
 These are the changes to each version that has been released
 on the official Visual Studio extension gallery.
 
-## 1.7
+## 1.7.0 (NuGet)
+
+- [x] Correctly identifies the package a development dependency (a private asset).
+- [x] Add readme to package.
+
+## 1.7 (VSIX)
 
 - [x] Add support for VS2022
 

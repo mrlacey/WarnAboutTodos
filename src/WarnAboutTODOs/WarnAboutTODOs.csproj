@@ -8,32 +8,32 @@
 
   <PropertyGroup>
     <PackageId>WarnAboutTODOs</PackageId>
-    <PackageVersion>1.6.0</PackageVersion>
+    <PackageVersion>1.7.0</PackageVersion>
+    <Version>1.7.0</Version>
+    <PackageReleaseNotes>Sets development dependency correctly.</PackageReleaseNotes>
     <Authors>Matt Lacey</Authors>
     <PackageProjectUrl>https://github.com/mrlacey/WarnAboutTodos</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mrlacey/WarnAboutTodos</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Description>Create warnings about TODO comments</Description>
-    <PackageReleaseNotes></PackageReleaseNotes>
-    <Copyright>Copyright 2021 Matt Lacey</Copyright>
-    <PackageTags>WarnAboutTODOs;analyzers</PackageTags>
+    <Copyright>Copyright © 2024 Matt Lacey</Copyright>
+    <PackageTags>WarnAboutTODOs TODO analyzers</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <Company>Matt Lacey Ltd.</Company>
-    <Version>1.7.0</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageIcon>Icon.png</PackageIcon>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <PackageReadmeFile>docs\readme.md</PackageReadmeFile>
 
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile></DocumentationFile>
     <NoWarn>1701;1702;CS1591</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile></DocumentationFile>
-    <NoWarn>1701;1702;SA1652</NoWarn>
+    <NoWarn>1701;1702</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -41,12 +41,17 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+    <None Include="readme.md" Pack="True" PackagePath="docs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.6.3" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.10.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="2.10.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
     <PackageReference Update="NETStandard.Library" PrivateAssets="all" />
   </ItemGroup>
