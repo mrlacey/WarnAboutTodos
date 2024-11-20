@@ -11,7 +11,7 @@ namespace WarnAboutTODOs
         public const string Name = "Warn About TODOs";
         public const string Description = @"Displays warnings for TODO notes in comments";
         public const string Language = "en-US";
-        public const string Version = "1.7.1";
+        public const string Version = "1.7.2";
         public const string Author = "Matt Lacey";
         public const string Tags = "";
     }
