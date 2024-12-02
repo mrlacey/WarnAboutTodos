@@ -1,4 +1,4 @@
-// <copyright file="WarnAboutTODOsAnalyzer.cs" company="Matt Lacey Ltd.">
+﻿// <copyright file="WarnAboutTODOsAnalyzer.cs" company="Matt Lacey Ltd.">
 // Copyright (c) Matt Lacey Ltd. All rights reserved.
 // </copyright>
 
@@ -14,280 +14,324 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace WarnAboutTODOs
 {
-    public abstract class WarnAboutTodosAnalyzer : DiagnosticAnalyzer
-    {
-        private const string Id = "TODO";
-        private const string Title = "TODO";
-        private const string MessageFormat = "{0}";
-        private const string Category = "Task List";
-        private const string HelpLinkUri = "https://github.com/mrlacey/WarnAboutTodos";
+	public abstract class WarnAboutTodosAnalyzer : DiagnosticAnalyzer
+	{
+		private const string Id = "TODO";
+		private const string Title = "TODO";
+		private const string MessageFormat = "{0}";
+		private const string Category = "Task List";
+		private const string HelpLinkUri = "https://github.com/mrlacey/WarnAboutTodos";
 
-        private static readonly DiagnosticDescriptor ErrorRule = new DiagnosticDescriptor(
-            Id,
-            Title,
-            MessageFormat,
-            Category,
-            DiagnosticSeverity.Error,
-            isEnabledByDefault: true,
-            helpLinkUri: HelpLinkUri);
+		private static readonly DiagnosticDescriptor ErrorRule = new DiagnosticDescriptor(
+			Id,
+			Title,
+			MessageFormat,
+			Category,
+			DiagnosticSeverity.Error,
+			isEnabledByDefault: true,
+			helpLinkUri: HelpLinkUri);
 
-        private static readonly DiagnosticDescriptor WarningRule = new DiagnosticDescriptor(
-            Id,
-            Title,
-            MessageFormat,
-            Category,
-            DiagnosticSeverity.Warning,
-            isEnabledByDefault: true,
-            helpLinkUri: HelpLinkUri);
+		private static readonly DiagnosticDescriptor WarningRule = new DiagnosticDescriptor(
+			Id,
+			Title,
+			MessageFormat,
+			Category,
+			DiagnosticSeverity.Warning,
+			isEnabledByDefault: true,
+			helpLinkUri: HelpLinkUri);
 
-        private static readonly DiagnosticDescriptor InfoRule = new DiagnosticDescriptor(
-            Id,
-            Title,
-            MessageFormat,
-            Category,
-            DiagnosticSeverity.Info,
-            isEnabledByDefault: true,
-            helpLinkUri: HelpLinkUri);
+		private static readonly DiagnosticDescriptor InfoRule = new DiagnosticDescriptor(
+			Id,
+			Title,
+			MessageFormat,
+			Category,
+			DiagnosticSeverity.Info,
+			isEnabledByDefault: true,
+			helpLinkUri: HelpLinkUri);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(ErrorRule, WarningRule, InfoRule);
+		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(ErrorRule, WarningRule, InfoRule);
 
-        public override void Initialize(AnalysisContext context)
-        {
-            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
-        }
+		public override void Initialize(AnalysisContext context)
+		{
+			context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
+		}
 
-        internal abstract void HandleSyntaxTree(SyntaxTreeAnalysisContext obj);
+		internal abstract void HandleSyntaxTree(SyntaxTreeAnalysisContext obj);
 
-        protected WatConfig GetConfig(SyntaxTreeAnalysisContext context)
-        {
-            var result = new WatConfig();
+		protected WatConfig GetConfig(SyntaxTreeAnalysisContext context)
+		{
+			var result = new WatConfig();
 
-            (result.Terms, result.Exclusions) = this.GetTermsAndExclusions(context);
+			(result.Terms, result.Exclusions) = this.GetTermsAndExclusions(context);
 
-            return result;
-        }
+			return result;
+		}
 
 #pragma warning disable SA1008 // Opening parenthesis must not be preceded by a space
-        protected (List<Term>, List<string>) GetTermsAndExclusions(SyntaxTreeAnalysisContext context)
+		protected (List<Term>, List<string>) GetTermsAndExclusions(SyntaxTreeAnalysisContext context)
 #pragma warning restore SA1008 // Opening parenthesis must not be preceded by a space
-        {
-            var terms = new List<Term>();
-            var exclusions = new List<string>();
+		{
+			var terms = new List<Term>();
+			var exclusions = new List<string>();
 
-            const string configFileName = "todo-warn.config";
-            var additionalFiles = context.Options.AdditionalFiles;
-            var termsFile = additionalFiles.FirstOrDefault(file => Path.GetFileName(file.Path).ToLowerInvariant().Equals(configFileName))
-                            ?? UserConfigFile.FromApplicationData(configFileName);
+			const string configFileName = "todo-warn.config";
+			var additionalFiles = context.Options.AdditionalFiles;
+			var termsFile = additionalFiles.FirstOrDefault(file => Path.GetFileName(file.Path).ToLowerInvariant().Equals(configFileName));
 
-            Term CreateTerm(ReportLevel level, string line)
-            {
-                var result = new Term { ReportLevel = level };
+			// If no file in the project, look for one in the same directory as the sln file
+			// TODO: See if can cache the results of this to avoid excessive disk IO
+			if (termsFile is null)
+			{
+				var currentFile = context.Tree.FilePath;
 
-                const string startsGroup = "[STARTS(";
-                const string containsGroup = "[CONTAINS(";
-                const string notContainsGroup = "[DOESNOTCONTAIN(";
-                const string matchesRegexGroup = "[MATCHESREGEX(";
-                const string closeGroup = ")]";
+				if (currentFile is not null)
+				{
+					var foundSlnFile = false;
 
-                if (line.StartsWith(startsGroup, StringComparison.OrdinalIgnoreCase))
-                {
-                    var closeIndex = line.IndexOf(closeGroup, StringComparison.Ordinal);
+					var dirOfInterest = Path.GetDirectoryName(currentFile);
 
-                    if (closeIndex > 0)
-                    {
-                        var startsLen = startsGroup.Length;
+					while (!foundSlnFile)
+					{
+						if (Directory.GetFiles(dirOfInterest, "*.sln").Any())
+						{
+							foundSlnFile = true;
+							if (File.Exists(Path.Combine(dirOfInterest, configFileName)))
+							{
+								termsFile = SolutionConfigFile.FromFilePath(Path.Combine(dirOfInterest, configFileName));
+							}
+							break;
+						}
+						else
+						{
+							dirOfInterest = Path.GetDirectoryName(dirOfInterest);
+						}
 
-                        result.StartsWith = line.Substring(startsLen, closeIndex - startsLen);
-                        line = line.Substring(closeIndex + closeGroup.Length);
-                    }
-                }
+						// if at root of drive or no more directories to check
+						if (Path.GetPathRoot(dirOfInterest) == dirOfInterest
+							|| string.IsNullOrWhiteSpace(dirOfInterest)
+							|| dirOfInterest.Length <= 3)
+						{
+							break;
+						}
+					}
+				}
+			}
 
-                if (line.StartsWith(containsGroup, StringComparison.OrdinalIgnoreCase))
-                {
-                    var closeIndex = line.IndexOf(closeGroup, StringComparison.Ordinal);
+			// If still not found a config file, look in the user's app data folder
+			if (termsFile is null)
+			{
+				termsFile = UserConfigFile.FromApplicationData(configFileName);
+			}
 
-                    if (closeIndex > 0)
-                    {
-                        var containsLen = containsGroup.Length;
+			Term CreateTerm(ReportLevel level, string line)
+			{
+				var result = new Term { ReportLevel = level };
 
-                        result.Contains = line.Substring(containsLen, closeIndex - containsLen);
-                        line = line.Substring(closeIndex + closeGroup.Length);
-                    }
-                }
+				const string startsGroup = "[STARTS(";
+				const string containsGroup = "[CONTAINS(";
+				const string notContainsGroup = "[DOESNOTCONTAIN(";
+				const string matchesRegexGroup = "[MATCHESREGEX(";
+				const string closeGroup = ")]";
 
-                if (line.StartsWith(notContainsGroup, StringComparison.OrdinalIgnoreCase))
-                {
-                    var closeIndex = line.IndexOf(closeGroup, StringComparison.Ordinal);
+				if (line.StartsWith(startsGroup, StringComparison.OrdinalIgnoreCase))
+				{
+					var closeIndex = line.IndexOf(closeGroup, StringComparison.Ordinal);
 
-                    if (closeIndex > 0)
-                    {
-                        var containsLen = notContainsGroup.Length;
+					if (closeIndex > 0)
+					{
+						var startsLen = startsGroup.Length;
 
-                        result.DoesNotContain = line.Substring(containsLen, closeIndex - containsLen);
-                        line = line.Substring(closeIndex + closeGroup.Length);
-                    }
-                }
+						result.StartsWith = line.Substring(startsLen, closeIndex - startsLen);
+						line = line.Substring(closeIndex + closeGroup.Length);
+					}
+				}
 
-                if (line.StartsWith(matchesRegexGroup, StringComparison.OrdinalIgnoreCase))
-                {
-                    var closeIndex = line.IndexOf(closeGroup, StringComparison.Ordinal);
+				if (line.StartsWith(containsGroup, StringComparison.OrdinalIgnoreCase))
+				{
+					var closeIndex = line.IndexOf(closeGroup, StringComparison.Ordinal);
 
-                    if (closeIndex > 0)
-                    {
-                        var containsLen = matchesRegexGroup.Length;
+					if (closeIndex > 0)
+					{
+						var containsLen = containsGroup.Length;
 
-                        result.MatchesRegex = line.Substring(containsLen, closeIndex - containsLen);
-                        line = line.Substring(closeIndex + closeGroup.Length);
-                    }
-                }
+						result.Contains = line.Substring(containsLen, closeIndex - containsLen);
+						line = line.Substring(closeIndex + closeGroup.Length);
+					}
+				}
 
-                if (!string.IsNullOrWhiteSpace(line) &&
-                    string.IsNullOrWhiteSpace(result.StartsWith) &&
-                    string.IsNullOrWhiteSpace(result.Contains) &&
-                    string.IsNullOrWhiteSpace(result.DoesNotContain) &&
-                    string.IsNullOrWhiteSpace(result.MatchesRegex))
-                {
-                    result.StartsWith = line;
-                }
+				if (line.StartsWith(notContainsGroup, StringComparison.OrdinalIgnoreCase))
+				{
+					var closeIndex = line.IndexOf(closeGroup, StringComparison.Ordinal);
 
-                return result;
-            }
+					if (closeIndex > 0)
+					{
+						var containsLen = notContainsGroup.Length;
 
-            if (termsFile != null)
-            {
-                var termsFileContents = termsFile.GetText(context.CancellationToken);
+						result.DoesNotContain = line.Substring(containsLen, closeIndex - containsLen);
+						line = line.Substring(closeIndex + closeGroup.Length);
+					}
+				}
 
-                const string errorIndicator = "[ERROR]";
-                const string infoIndicator = "[INFO]";
-                const string warningIndicator = "[WARN]";
-                const string exclusionIndicator = "[EXCLUDE]";
+				if (line.StartsWith(matchesRegexGroup, StringComparison.OrdinalIgnoreCase))
+				{
+					var closeIndex = line.IndexOf(closeGroup, StringComparison.Ordinal);
 
-                foreach (var line in termsFileContents.Lines)
-                {
-                    var lineText = line.ToString();
+					if (closeIndex > 0)
+					{
+						var containsLen = matchesRegexGroup.Length;
 
-                    if (lineText.StartsWith(exclusionIndicator, StringComparison.OrdinalIgnoreCase))
-                    {
-                        exclusions.Add(lineText.Substring(exclusionIndicator.Length).Trim());
-                    }
-                    else if (lineText.StartsWith(errorIndicator, StringComparison.OrdinalIgnoreCase))
-                    {
-                        terms.Add(CreateTerm(ReportLevel.Error, lineText.Substring(errorIndicator.Length)));
-                    }
-                    else if (lineText.StartsWith(infoIndicator, StringComparison.OrdinalIgnoreCase))
-                    {
-                        terms.Add(CreateTerm(ReportLevel.Info, lineText.Substring(infoIndicator.Length)));
-                    }
-                    else if (lineText.StartsWith(warningIndicator, StringComparison.OrdinalIgnoreCase))
-                    {
-                        terms.Add(CreateTerm(ReportLevel.Warning, lineText.Substring(warningIndicator.Length)));
-                    }
-                    else if (!string.IsNullOrWhiteSpace(line.ToString()))
-                    {
-                        terms.Add(CreateTerm(ReportLevel.Warning, lineText));
-                    }
-                }
-            }
+						result.MatchesRegex = line.Substring(containsLen, closeIndex - containsLen);
+						line = line.Substring(closeIndex + closeGroup.Length);
+					}
+				}
 
-            if (!terms.Any())
-            {
-                terms.Add(Term.Default);
-            }
+				if (!string.IsNullOrWhiteSpace(line) &&
+					string.IsNullOrWhiteSpace(result.StartsWith) &&
+					string.IsNullOrWhiteSpace(result.Contains) &&
+					string.IsNullOrWhiteSpace(result.DoesNotContain) &&
+					string.IsNullOrWhiteSpace(result.MatchesRegex))
+				{
+					result.StartsWith = line;
+				}
 
-            return (terms, exclusions);
-        }
+				return result;
+			}
 
-        protected void ReportIfUsesTerms(string comment, List<Term> terms, SyntaxTreeAnalysisContext context, Location location, int startOffset = -1)
-        {
-            var displayComment = string.Empty;
-            var displayOffset = 0;
+			if (termsFile != null)
+			{
+				var termsFileContents = termsFile.GetText(context.CancellationToken);
 
-            foreach (var term in terms)
-            {
-                var report = false;
+				const string errorIndicator = "[ERROR]";
+				const string infoIndicator = "[INFO]";
+				const string warningIndicator = "[WARN]";
+				const string exclusionIndicator = "[EXCLUDE]";
 
-                if (!string.IsNullOrWhiteSpace(term.StartsWith))
-                {
-                    if (comment.ToLowerInvariant().StartsWith(term.StartsWith.ToLowerInvariant()))
-                    {
-                        displayComment = comment.Substring(term.StartsWith.Length).TrimStart(' ', ':');
-                        displayOffset = comment.IndexOf(term.StartsWith, StringComparison.OrdinalIgnoreCase);
-                        report = true;
-                    }
-                    else
-                    {
-                        continue;
-                    }
-                }
+				foreach (var line in termsFileContents.Lines)
+				{
+					var lineText = line.ToString();
 
-                if (!string.IsNullOrWhiteSpace(term.Contains))
-                {
-                    if (comment.ToLowerInvariant().Contains(term.Contains.ToLowerInvariant()))
-                    {
-                        report = true;
-                    }
-                    else
-                    {
-                        continue;
-                    }
-                }
+					if (lineText.StartsWith(exclusionIndicator, StringComparison.OrdinalIgnoreCase))
+					{
+						exclusions.Add(lineText.Substring(exclusionIndicator.Length).Trim());
+					}
+					else if (lineText.StartsWith(errorIndicator, StringComparison.OrdinalIgnoreCase))
+					{
+						terms.Add(CreateTerm(ReportLevel.Error, lineText.Substring(errorIndicator.Length)));
+					}
+					else if (lineText.StartsWith(infoIndicator, StringComparison.OrdinalIgnoreCase))
+					{
+						terms.Add(CreateTerm(ReportLevel.Info, lineText.Substring(infoIndicator.Length)));
+					}
+					else if (lineText.StartsWith(warningIndicator, StringComparison.OrdinalIgnoreCase))
+					{
+						terms.Add(CreateTerm(ReportLevel.Warning, lineText.Substring(warningIndicator.Length)));
+					}
+					else if (!string.IsNullOrWhiteSpace(line.ToString()))
+					{
+						terms.Add(CreateTerm(ReportLevel.Warning, lineText));
+					}
+				}
+			}
 
-                if (!string.IsNullOrWhiteSpace(term.DoesNotContain))
-                {
-                    if (!comment.ToLowerInvariant().Contains(term.DoesNotContain.ToLowerInvariant()))
-                    {
-                        report = true;
-                    }
-                    else
-                    {
-                        continue;
-                    }
-                }
+			if (!terms.Any())
+			{
+				terms.Add(Term.Default);
+			}
 
-                if (!string.IsNullOrWhiteSpace(term.MatchesRegex))
-                {
-                    if (new Regex(term.MatchesRegex).IsMatch(comment))
-                    {
-                        report = true;
-                    }
-                    else
-                    {
-                        continue;
-                    }
-                }
+			return (terms, exclusions);
+		}
 
-                if (report)
-                {
-                    if (string.IsNullOrWhiteSpace(displayComment))
-                    {
-                        displayComment = comment;
-                    }
+		protected void ReportIfUsesTerms(string comment, List<Term> terms, SyntaxTreeAnalysisContext context, Location location, int startOffset = -1)
+		{
+			var displayComment = string.Empty;
+			var displayOffset = 0;
 
-                    var locationToUse = location;
+			foreach (var term in terms)
+			{
+				var report = false;
 
-                    if (startOffset >= 0)
-                    {
-                        locationToUse = Location.Create(
-                            location.SourceTree,
-                            new TextSpan(startOffset + displayOffset, comment.Length - displayOffset));
-                    }
+				if (!string.IsNullOrWhiteSpace(term.StartsWith))
+				{
+					if (comment.ToLowerInvariant().StartsWith(term.StartsWith.ToLowerInvariant()))
+					{
+						displayComment = comment.Substring(term.StartsWith.Length).TrimStart(' ', ':');
+						displayOffset = comment.IndexOf(term.StartsWith, StringComparison.OrdinalIgnoreCase);
+						report = true;
+					}
+					else
+					{
+						continue;
+					}
+				}
 
-                    switch (term.ReportLevel)
-                    {
-                        case ReportLevel.Warning:
-                            context.ReportDiagnostic(Diagnostic.Create(WarningRule, locationToUse, displayComment));
-                            break;
-                        case ReportLevel.Error:
-                            context.ReportDiagnostic(Diagnostic.Create(ErrorRule, locationToUse, displayComment));
-                            break;
-                        case ReportLevel.Info:
-                            context.ReportDiagnostic(Diagnostic.Create(InfoRule, locationToUse, displayComment));
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                }
-            }
-        }
-    }
+				if (!string.IsNullOrWhiteSpace(term.Contains))
+				{
+					if (comment.ToLowerInvariant().Contains(term.Contains.ToLowerInvariant()))
+					{
+						report = true;
+					}
+					else
+					{
+						continue;
+					}
+				}
+
+				if (!string.IsNullOrWhiteSpace(term.DoesNotContain))
+				{
+					if (!comment.ToLowerInvariant().Contains(term.DoesNotContain.ToLowerInvariant()))
+					{
+						report = true;
+					}
+					else
+					{
+						continue;
+					}
+				}
+
+				if (!string.IsNullOrWhiteSpace(term.MatchesRegex))
+				{
+					if (new Regex(term.MatchesRegex).IsMatch(comment))
+					{
+						report = true;
+					}
+					else
+					{
+						continue;
+					}
+				}
+
+				if (report)
+				{
+					if (string.IsNullOrWhiteSpace(displayComment))
+					{
+						displayComment = comment;
+					}
+
+					var locationToUse = location;
+
+					if (startOffset >= 0)
+					{
+						locationToUse = Location.Create(
+							location.SourceTree,
+							new TextSpan(startOffset + displayOffset, comment.Length - displayOffset));
+					}
+
+					switch (term.ReportLevel)
+					{
+						case ReportLevel.Warning:
+							context.ReportDiagnostic(Diagnostic.Create(WarningRule, locationToUse, displayComment));
+							break;
+						case ReportLevel.Error:
+							context.ReportDiagnostic(Diagnostic.Create(ErrorRule, locationToUse, displayComment));
+							break;
+						case ReportLevel.Info:
+							context.ReportDiagnostic(Diagnostic.Create(InfoRule, locationToUse, displayComment));
+							break;
+						default:
+							throw new ArgumentOutOfRangeException();
+					}
+				}
+			}
+		}
+	}
 }
