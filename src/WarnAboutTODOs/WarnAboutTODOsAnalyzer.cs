@@ -95,7 +95,7 @@ namespace WarnAboutTODOs
 			isEnabledByDefault: true,
 			helpLinkUri: HelpLinkUri);
 
-		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(ErrorRule, WarningRule, InfoRule);
+		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(ErrorRule, ErrorRule2, ErrorRule3, WarningRule, WarningRule2, WarningRule3, InfoRule);
 
 		public override void Initialize(AnalysisContext context)
 		{
