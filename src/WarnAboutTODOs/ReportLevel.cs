@@ -8,6 +8,10 @@ namespace WarnAboutTODOs
     {
         Warning,
         Error,
-        Info
+        Info,
+        Warning2,
+        Error2,
+        Warning3,
+        Error3
     }
 }

@@ -1,4 +1,4 @@
-﻿// <copyright file="WarnAboutTODOsAnalyzer.cs" company="Matt Lacey Ltd.">
+// <copyright file="WarnAboutTODOsAnalyzer.cs" company="Matt Lacey Ltd.">
 // Copyright (c) Matt Lacey Ltd. All rights reserved.
 // </copyright>
 
@@ -16,24 +16,70 @@ namespace WarnAboutTODOs
 {
 	public abstract class WarnAboutTodosAnalyzer : DiagnosticAnalyzer
 	{
-		private const string Id = "TODO";
-		private const string Title = "TODO";
+		private const string IdError = "TODOE1";
+		private const string IdError2 = "TODOE2";
+		private const string IdError3 = "TODOE3";
+		private const string IdWarning = "TODOW1";
+		private const string IdWarning2 = "TODOW2";
+		private const string IdWarning3 = "TODOW3";
+		private const string IdInfo = "TODOI";
+		private const string TitleError = "TODO-ERROR";
+		private const string TitleWarning = "TODO-WARN";
+		private const string TitleInfo = "TODO-INFO";
 		private const string MessageFormat = "{0}";
 		private const string Category = "Task List";
 		private const string HelpLinkUri = "https://github.com/mrlacey/WarnAboutTodos";
 
 		private static readonly DiagnosticDescriptor ErrorRule = new DiagnosticDescriptor(
-			Id,
-			Title,
+			IdError,
+			TitleError,
 			MessageFormat,
 			Category,
 			DiagnosticSeverity.Error,
 			isEnabledByDefault: true,
 			helpLinkUri: HelpLinkUri);
 
+		private static readonly DiagnosticDescriptor ErrorRule2 = new DiagnosticDescriptor(
+			IdError2,
+			TitleError,
+			MessageFormat,
+			Category,
+			DiagnosticSeverity.Error,
+			isEnabledByDefault: true,
+			helpLinkUri: HelpLinkUri,
+            customTags: WellKnownDiagnosticTags.Build);
+
+		private static readonly DiagnosticDescriptor ErrorRule3 = new DiagnosticDescriptor(
+			IdError3,
+			TitleError,
+			MessageFormat,
+			Category,
+			DiagnosticSeverity.Error,
+			isEnabledByDefault: true,
+			helpLinkUri: HelpLinkUri,
+            customTags: WellKnownDiagnosticTags.Build);
+
 		private static readonly DiagnosticDescriptor WarningRule = new DiagnosticDescriptor(
-			Id,
-			Title,
+			IdWarning,
+			TitleWarning,
+			MessageFormat,
+			Category,
+			DiagnosticSeverity.Warning,
+			isEnabledByDefault: true,
+			helpLinkUri: HelpLinkUri);
+
+		private static readonly DiagnosticDescriptor WarningRule2 = new DiagnosticDescriptor(
+			IdWarning2,
+			TitleWarning,
+			MessageFormat,
+			Category,
+			DiagnosticSeverity.Warning,
+			isEnabledByDefault: true,
+			helpLinkUri: HelpLinkUri);
+
+		private static readonly DiagnosticDescriptor WarningRule3 = new DiagnosticDescriptor(
+			IdWarning3,
+			TitleWarning,
 			MessageFormat,
 			Category,
 			DiagnosticSeverity.Warning,
@@ -41,8 +87,8 @@ namespace WarnAboutTODOs
 			helpLinkUri: HelpLinkUri);
 
 		private static readonly DiagnosticDescriptor InfoRule = new DiagnosticDescriptor(
-			Id,
-			Title,
+			IdInfo,
+			TitleInfo,
 			MessageFormat,
 			Category,
 			DiagnosticSeverity.Info,
@@ -202,8 +248,12 @@ namespace WarnAboutTODOs
 				var termsFileContents = termsFile.GetText(context.CancellationToken);
 
 				const string errorIndicator = "[ERROR]";
+				const string errorIndicator2 = "[ERROR2]";
+				const string errorIndicator3 = "[ERROR3]";
 				const string infoIndicator = "[INFO]";
 				const string warningIndicator = "[WARN]";
+				const string warningIndicator2 = "[WARN2]";
+				const string warningIndicator3 = "[WARN3]";
 				const string exclusionIndicator = "[EXCLUDE]";
 
 				foreach (var line in termsFileContents.Lines)
@@ -214,6 +264,15 @@ namespace WarnAboutTODOs
 					{
 						exclusions.Add(lineText.Substring(exclusionIndicator.Length).Trim());
 					}
+                    //NOTE: The order - ERROR2, ERROR3, ERROR - to properly match all cases and still be performant
+					else if (lineText.StartsWith(errorIndicator2, StringComparison.OrdinalIgnoreCase))
+					{
+						terms.Add(CreateTerm(ReportLevel.Error2, lineText.Substring(errorIndicator2.Length)));
+					}
+					else if (lineText.StartsWith(errorIndicator3, StringComparison.OrdinalIgnoreCase))
+					{
+						terms.Add(CreateTerm(ReportLevel.Error3, lineText.Substring(errorIndicator2.Length)));
+					}
 					else if (lineText.StartsWith(errorIndicator, StringComparison.OrdinalIgnoreCase))
 					{
 						terms.Add(CreateTerm(ReportLevel.Error, lineText.Substring(errorIndicator.Length)));
@@ -221,6 +280,15 @@ namespace WarnAboutTODOs
 					else if (lineText.StartsWith(infoIndicator, StringComparison.OrdinalIgnoreCase))
 					{
 						terms.Add(CreateTerm(ReportLevel.Info, lineText.Substring(infoIndicator.Length)));
+					}
+                    //NOTE: The order first we check for WARNING2, WARNING3, WARNING - to properly match all cases and still be performant
+					else if (lineText.StartsWith(warningIndicator2, StringComparison.OrdinalIgnoreCase))
+					{
+						terms.Add(CreateTerm(ReportLevel.Warning2, lineText.Substring(warningIndicator.Length)));
+					}
+					else if (lineText.StartsWith(warningIndicator3, StringComparison.OrdinalIgnoreCase))
+					{
+						terms.Add(CreateTerm(ReportLevel.Warning3, lineText.Substring(warningIndicator.Length)));
 					}
 					else if (lineText.StartsWith(warningIndicator, StringComparison.OrdinalIgnoreCase))
 					{
@@ -326,6 +394,18 @@ namespace WarnAboutTODOs
 							break;
 						case ReportLevel.Info:
 							context.ReportDiagnostic(Diagnostic.Create(InfoRule, locationToUse, displayComment));
+							break;
+						case ReportLevel.Error2:
+							context.ReportDiagnostic(Diagnostic.Create(ErrorRule2, locationToUse, displayComment));
+							break;
+						case ReportLevel.Error3:
+							context.ReportDiagnostic(Diagnostic.Create(ErrorRule3, locationToUse, displayComment));
+							break;
+						case ReportLevel.Warning2:
+							context.ReportDiagnostic(Diagnostic.Create(WarningRule2, locationToUse, displayComment));
+							break;
+						case ReportLevel.Warning3:
+							context.ReportDiagnostic(Diagnostic.Create(WarningRule3, locationToUse, displayComment));
 							break;
 						default:
 							throw new ArgumentOutOfRangeException();
