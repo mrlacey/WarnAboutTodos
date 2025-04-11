@@ -271,7 +271,7 @@ namespace WarnAboutTODOs
 					}
 					else if (lineText.StartsWith(errorIndicator3, StringComparison.OrdinalIgnoreCase))
 					{
-						terms.Add(CreateTerm(ReportLevel.Error3, lineText.Substring(errorIndicator2.Length)));
+						terms.Add(CreateTerm(ReportLevel.Error3, lineText.Substring(errorIndicator3.Length)));
 					}
 					else if (lineText.StartsWith(errorIndicator, StringComparison.OrdinalIgnoreCase))
 					{
@@ -284,11 +284,11 @@ namespace WarnAboutTODOs
                     //NOTE: The order first we check for WARNING2, WARNING3, WARNING - to properly match all cases and still be performant
 					else if (lineText.StartsWith(warningIndicator2, StringComparison.OrdinalIgnoreCase))
 					{
-						terms.Add(CreateTerm(ReportLevel.Warning2, lineText.Substring(warningIndicator.Length)));
+						terms.Add(CreateTerm(ReportLevel.Warning2, lineText.Substring(warningIndicator2.Length)));
 					}
 					else if (lineText.StartsWith(warningIndicator3, StringComparison.OrdinalIgnoreCase))
 					{
-						terms.Add(CreateTerm(ReportLevel.Warning3, lineText.Substring(warningIndicator.Length)));
+						terms.Add(CreateTerm(ReportLevel.Warning3, lineText.Substring(warningIndicator3.Length)));
 					}
 					else if (lineText.StartsWith(warningIndicator, StringComparison.OrdinalIgnoreCase))
 					{
