@@ -46,8 +46,7 @@ namespace WarnAboutTODOs
 			Category,
 			DiagnosticSeverity.Error,
 			isEnabledByDefault: true,
-			helpLinkUri: HelpLinkUri,
-            customTags: WellKnownDiagnosticTags.Build);
+			helpLinkUri: HelpLinkUri);
 
 		private static readonly DiagnosticDescriptor ErrorRule3 = new DiagnosticDescriptor(
 			IdError3,
@@ -56,8 +55,7 @@ namespace WarnAboutTODOs
 			Category,
 			DiagnosticSeverity.Error,
 			isEnabledByDefault: true,
-			helpLinkUri: HelpLinkUri,
-            customTags: WellKnownDiagnosticTags.Build);
+			helpLinkUri: HelpLinkUri);
 
 		private static readonly DiagnosticDescriptor WarningRule = new DiagnosticDescriptor(
 			IdWarning,
