@@ -8,15 +8,15 @@
 
   <PropertyGroup>
     <PackageId>WarnAboutTODOs</PackageId>
-    <PackageVersion>1.7.0</PackageVersion>
-    <Version>1.7.0</Version>
+    <PackageVersion>1.7.1</PackageVersion>
+    <Version>1.7.1</Version>
     <PackageReleaseNotes>Sets development dependency correctly.</PackageReleaseNotes>
     <Authors>Matt Lacey</Authors>
     <PackageProjectUrl>https://github.com/mrlacey/WarnAboutTodos</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mrlacey/WarnAboutTodos</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <Description>Create warnings about TODO comments</Description>
-    <Copyright>Copyright © 2024 Matt Lacey</Copyright>
+    <Copyright>Copyright © 2025 Matt Lacey</Copyright>
     <PackageTags>WarnAboutTODOs TODO analyzers</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <Company>Matt Lacey Ltd.</Company>
@@ -61,5 +61,5 @@
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
   
-	<Import Project=".\signnupkg.targets" />
+	<!--<Import Project=".\signnupkg.targets" />-->
 </Project>
